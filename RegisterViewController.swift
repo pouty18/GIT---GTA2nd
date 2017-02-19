@@ -9,17 +9,21 @@
 import UIKit
 import Firebase
 
-class RegisterViewController: UIViewController {
+class RegisterViewController: UIViewController, UITextFieldDelegate {
 
-    @IBOutlet weak var firstNameTxt: UITextField!
-    @IBOutlet weak var lastNameTxt: UITextField!
-    @IBOutlet weak var emailTxt: UITextField!
-    @IBOutlet weak var passwordTxt: UITextField!
+    @IBOutlet weak var firstNameTxt: UITextField! = nil
+    @IBOutlet weak var lastNameTxt: UITextField! = nil
+    @IBOutlet weak var emailTxt: UITextField! = nil
+    @IBOutlet weak var passwordTxt: UITextField! = nil
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        firstNameTxt.delegate = self
+        lastNameTxt.delegate = self
+        emailTxt.delegate = self
+        passwordTxt.delegate = self
         // Do any additional setup after loading the view.
     }
 
@@ -29,6 +33,18 @@ class RegisterViewController: UIViewController {
     }
     
     @IBAction func registerButtonTapped() {
+        passwordTxt.resignFirstResponder()
+        registerUser()
+    }
+    
+    @IBAction func goBackButtonTapped() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    //registers a new user, presents loading indicator while it waits for confirmation from server
+    func registerUser() {
+        
         //setUP Loading Overlay
         
         let alert = UIAlertController(title: nil, message: "Registering New User...", preferredStyle: .alert)
@@ -53,7 +69,7 @@ class RegisterViewController: UIViewController {
         
         //right here we're just checking to see if the values are empty
         if firstName != "" || lastName != "" || email != "" || password != "" {
-        
+            
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error) in
                 if error == nil {
                     print  ("You are successfully registered")
@@ -65,7 +81,7 @@ class RegisterViewController: UIViewController {
                             print("Name updated")
                             
                             //**HANDLE SEGUE TO APPROPIATE VIEW - PROFESSOR VS. STUDENT
-                            clearFields()
+                            self.clearFields()
                             alert.dismiss(animated: true, completion: nil)
                             
                             self.performSegue(withIdentifier: "showStudentHomePage", sender: nil)
@@ -79,11 +95,12 @@ class RegisterViewController: UIViewController {
                     
                 }else{
                     //failure in registration process
+                    self.presentAlertView("Registration Failed", _message: "There was an error in registering your information. Please double check everything and try again.")
                 }
             })
             
             
-        
+            
         } //else the info was not currently inputted
         else {
             
@@ -93,13 +110,9 @@ class RegisterViewController: UIViewController {
             emailTxt.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSForegroundColorAttributeName: UIColor.red])
             passwordTxt.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSForegroundColorAttributeName: UIColor.red])
             alert.dismiss(animated: true, completion: nil)
-
+            
         }
-        
-    }
-    
-    @IBAction func goBackButtonTapped() {
-        self.dismiss(animated: true, completion: nil)
+
     }
     
     func clearFields() {
@@ -117,6 +130,30 @@ class RegisterViewController: UIViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+     */
+    
+    func presentAlertView(_ str: String, _message: String) {
+        
+        let alert = UIAlertController(title: str, message: _message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    //handles keyboard operations
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        if textField == self.firstNameTxt {
+            self.lastNameTxt.becomeFirstResponder()
+        } else if textField == self.lastNameTxt {
+            emailTxt.becomeFirstResponder()
+        } else if textField == self.emailTxt {
+            passwordTxt.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+            registerUser()
+            return true
+        }
+        return false
+    }
 
 }

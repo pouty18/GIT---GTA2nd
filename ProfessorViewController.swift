@@ -7,12 +7,30 @@
 //
 
 import UIKit
+import Firebase
 
 class ProfessorViewController: UIViewController {
 
+    @IBOutlet weak var titleLabel: UILabel!
+//    @IBOutlet weak var emailLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //attempt to get user info
+        if let user = FIRAuth.auth()?.currentUser {
+            if let name = user.displayName {
+                self.titleLabel.text = name
+            }
+            if let email = user.email {
+                print("This is where it was going wrong \(email)")
+                //self.emailLabel.text = email
+            }
+            
+            let thisID = user.uid
+            globalAuthID = thisID
+            
+        }
         // Do any additional setup after loading the view.
     }
 

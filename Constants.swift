@@ -9,3 +9,5 @@
 import Foundation
 
 var adminID = "Wur1Me5OYNSb7LPvJklJEbvQZ7D3"
+
+var globalAuthID: String = ""
