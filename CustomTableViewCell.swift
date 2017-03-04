@@ -18,6 +18,7 @@ class CustomTableViewCell: UITableViewCell {
     
     @IBOutlet weak var cellPicPlaceholder: UILabel!
     
+    @IBOutlet weak var cellStatusLabel: UILabel!
     
     
     

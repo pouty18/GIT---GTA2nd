@@ -82,10 +82,10 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
                             
                             //**HANDLE SEGUE TO APPROPIATE VIEW - PROFESSOR VS. STUDENT
                             self.clearFields()
-                            alert.dismiss(animated: true, completion: nil)
+                            alert.dismiss(animated: true, completion: {action in
                             
                             self.performSegue(withIdentifier: "showStudentHomePage", sender: nil)
-                            
+                            })
                         }
                         else {
                             print("Error updating the name")

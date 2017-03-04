@@ -19,16 +19,23 @@ class StudentViewController: UIViewController {
         // Do any additional setup after loading the view.
         //attempt to get user info
         if let user = FIRAuth.auth()?.currentUser {
+            var post = [String : String]()
+            
             if let name = user.displayName {
                 self.titleLabel.text = name
+                post["name"] = name
             }
             if let email = user.email {
-                print("This is where it was going wrong \(email)")
-                //self.emailLabel.text = email
+                post["email"] = email
             }
             
             let thisID = user.uid
             globalAuthID = thisID
+            
+            //update user section of database
+            let ref = FIRDatabase.database().reference()
+            let childUpdates = ["/users/\(user.uid)/" : post]
+            ref.updateChildValues(childUpdates as [AnyHashable : Any])
             
         }
     }
@@ -45,6 +52,8 @@ class StudentViewController: UIViewController {
         let firebaseAuth = FIRAuth.auth()
         do {
             try firebaseAuth?.signOut()
+            globalAuthID = ""
+            
         } catch let signOutError as NSError {
             print ("Error signing out: %@", signOutError)
         }

@@ -15,6 +15,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTxt: UITextField! = nil
     @IBOutlet weak var passwordTxt: UITextField! = nil
     
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -71,6 +73,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     if user?.uid == adminID {
                         alert.dismiss(animated: true, completion: nil)
                         self.clearTextFields()
+                        
                         self.performSegue(withIdentifier: "showProfessorHomePage", sender: nil)
                     } else {
                         //else push student homepage
